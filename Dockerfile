@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     build-essential \
     git \
     nano \
+    mc \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove stable version of JupyterLab intalled in base notebook Dockerfile
@@ -58,8 +59,11 @@ RUN cd /tmp && \
     jlpm run build && \
     cd && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip install scipy ipympl bqplot ipyvolume
+
 
 ADD handler.py /tmp/jupyterlab/jupyterlab/datastore/handler.py
 
 USER $NB_UID
+COPY --chown=$NB_USER:users /examples/* /home/$NB_USER/
